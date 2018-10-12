@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Embedded Page</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+    <h1 id="title">Loading...</h1>
+    <script>
+        var start = new Date().getTime();
+        var mayRefresh = true;
+        var title = document.getElementById("title");
+
+        window.addEventListener("message", function (event) {
+            if (mayRefresh && event.data === "reload!") {
+                window.location.reload();
+            }
+        });
+
+        /**
+         * Simulates a webpage with a lot of hard data to process on startup
+         */
+        function doALotOfWork() {
+            var arrays = [];
+
+            for (var i = 0; i < 500; i += 1) {
+                arrays.push([]);
+
+                for (var j = 0; j < 350; j += 1) {
+                    arrays[i].push(arrays[i - 1]);
+                    title.textContent = "Loading...";
+                }
+            }
+        }
+
+        function main() {
+            // First, we simulate a startup that takes a lot of JS compute
+            doALotOfWork();
+ 
+            setTimeout(function () {
+                // Suppose your error happens if the page takes > 1 second to initialize,
+                // and even then with a 1/10 chance of throwing...
+                var elapsed = new Date().getTime() - start;
+                if (Math.random() >= 0.1 || elapsed < 2000) {
+                    title.textContent = "Elapsed ms: " + elapsed;
+                    return;
+                }
+
+                // ...eventually, with enough refreshes, it should pop up!
+                title.textContent = "It happened!";
+                title.style.color = "red";
+                title.style.fontWeight = "bold";
+
+                // (the parent frame should stop updating the UI once this happens)
+                mayRefresh = false;
+            });
+        }
+
+        // setTimeouts here and above allow the browser to re-render between work
+        window.onload = function () {
+            setTimeout(main);
+        };
+    </script>
+</body>
+</html>

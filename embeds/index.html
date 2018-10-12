@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Stress Test 💪</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+    <script>
+        /**
+         * Source URL to set for embed <iframe>s.
+         */
+        var embed = "inner.html";
+
+        /**
+         * How many <iframe>s to create.
+         */
+        var iframesCount = 12;
+
+        function main() {
+            var iframes = [];
+
+            // First create a bunch of <iframe>s on the page
+            for (var i = 0; i < iframesCount; i += 1) {
+                var iframe = document.createElement("iframe");
+            
+                iframe.style.display = "inline-block";
+                iframe.style.height = "210px";
+                iframe.style.width = "350px";
+            
+                iframe.src = embed;
+            
+                document.body.appendChild(iframe);
+            
+                iframes.push(iframe);
+            }
+
+            // Continously reload the frames by posting the "reload!" message to them
+            function reloadIframes() {
+                for (var i = 0; i < iframesCount; i += 1) {
+                    iframes[i].contentWindow.postMessage("reload!", '*'); 
+                }
+
+                setTimeout(reloadIframes, 2000);
+            }
+
+            reloadIframes();
+        }
+
+        window.onload = main;
+    </script>
+</body>
+</html>
